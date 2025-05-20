@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KelasGuru - Sistem Administrasi Pendidikan</title>
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjU2IDU2TDU2IDE2Mi41VjE4NEwyNTYgMjkwLjVMNDU2IDE4NFYxNjIuNUwyNTYgNTZaIiBmaWxsPSIjMzY4NWZmIi8+PHBhdGggZD0iTTQ1NiAyMDhMNDEzIDIyOFYzMTBDMzkwLjUgMzQ0LjUgMzUxIDM3NiAyNTYgMzc2QzE2MSAzNzYgMTIxLjUgMzQ0LjUgOTkgMzEwVjIyOEw1NiAyMDhWMzM2Qzg3LjUgMzkwLjUgMTU4IDQ1NiAyNTYgNDU2QzM1NCA0NTYgNDI0LjUgMzkwLjUgNDU2IDMzNlYyMDhaIiBmaWxsPSIjMzY4NWZmIi8+PHBhdGggZD0iTTM2OCAyNDJWMzA2LjVMMzk2IDI4MlYyMjNMMzY4IDI0MloiIGZpbGw9IiMzNjg1ZmYiLz48cGF0aCBkPSJNMTY5IDIzMkwxNTEgMjI4LjVMMTQzIDI1MkwxNjAgMjUwTDE2OSAyMzJaIiBzdHJva2U9IiMzNjg1ZmYiIHN0cm9rZS13aWR0aD0iOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTE2OSAyMzJMMjI1IDI0NUwyOTYgMjQwLjVMMzQwIDIxMiIgc3Ryb2tlPSIjMzY4NWZmIiBzdHJva2Utd2lkdGg9IjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==" type="image/svg+xml">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="shadcn-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: hsl(var(--background));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .hero-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 2rem;
+        }
+        
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            border-radius: 0.5rem;
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            max-width: 320px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+        }
+        
+        .teacher-icon {
+            background-color: hsl(var(--primary) / 0.1);
+            color: hsl(var(--primary));
+        }
+        
+        .student-icon {
+            background-color: hsl(var(--success) / 0.1);
+            color: hsl(var(--success));
+        }
+        
+        .footer {
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+            border-top: 1px solid hsl(var(--border));
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if already logged in
+            const userData = localStorage.getItem('kelasguru_user');
+            const siswaData = localStorage.getItem('kelasguru_siswa');
+            
+            if (userData) {
+                try {
+                    JSON.parse(userData); // Validate JSON
+                    window.location.href = 'dashboard.html';
+                } catch (e) {
+                    localStorage.removeItem('kelasguru_user');
+                }
+            } else if (siswaData) {
+                try {
+                    JSON.parse(siswaData); // Validate JSON
+                    window.location.href = 'siswa-dashboard.html';
+                } catch (e) {
+                    localStorage.removeItem('kelasguru_siswa');
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="hero-container">
+        <svg class="logo text-primary" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M256 56L56 162.5V184L256 290.5L456 184V162.5L256 56Z" fill="currentColor"/>
+            <path d="M456 208L413 228V310C390.5 344.5 351 376 256 376C161 376 121.5 344.5 99 310V228L56 208V336C87.5 390.5 158 456 256 456C354 456 424.5 390.5 456 336V208Z" fill="currentColor"/>
+            <path d="M368 242V306.5L396 282V223L368 242Z" fill="currentColor"/>
+            <path d="M169 232L151 228.5L143 252L160 250L169 232Z" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M169 232L225 245L296 240.5L340 212" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        
+        <h1 class="text-3xl font-bold mb-2 text-center">KelasGuru</h1>
+        <p class="text-muted-foreground mb-8 text-center">Sistem Administrasi Pendidikan</p>
+        
+        <div class="flex flex-col md:flex-row gap-4 mb-8">
+            <a href="login.html" class="card">
+                <div class="card-icon teacher-icon">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-semibold mb-2">Login sebagai Guru</h2>
+                <p class="text-muted-foreground text-sm">Akses panel administrasi guru untuk mengelola kelas, nilai, dan lebih banyak lagi.</p>
+            </a>
+            
+            <a href="siswa-login.html" class="card">
+                <div class="card-icon student-icon">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-semibold mb-2">Login sebagai Siswa</h2>
+                <p class="text-muted-foreground text-sm">Lihat nilai, kemajuan, dan pencapaian Anda dalam platform gamifikasi pembelajaran.</p>
+            </a>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>&copy; 2023 KelasGuru. All rights reserved.</p>
+    </div>
+</body>
+</html>

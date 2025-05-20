@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Siswa - KelasGuru</title>
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjU2IDU2TDU2IDE2Mi41VjE4NEwyNTYgMjkwLjVMNDU2IDE4NFYxNjIuNUwyNTYgNTZaIiBmaWxsPSIjMzY4NWZmIi8+PHBhdGggZD0iTTQ1NiAyMDhMNDEzIDIyOFYzMTBDMzkwLjUgMzQ0LjUgMzUxIDM3NiAyNTYgMzc2QzE2MSAzNzYgMTIxLjUgMzQ0LjUgOTkgMzEwVjIyOEw1NiAyMDhWMzM2Qzg3LjUgMzkwLjUgMTU4IDQ1NiAyNTYgNDU2QzM1NCA0NTYgNDI0LjUgMzkwLjUgNDU2IDMzNlYyMDhaIiBmaWxsPSIjMzY4NWZmIi8+PHBhdGggZD0iTTM2OCAyNDJWMzA2LjVMMzk2IDI4MlYyMjNMMzY4IDI0MloiIGZpbGw9IiMzNjg1ZmYiLz48cGF0aCBkPSJNMTY5IDIzMkwxNTEgMjI4LjVMMTQzIDI1MkwxNjAgMjUwTDE2OSAyMzJaIiBzdHJva2U9IiMzNjg1ZmYiIHN0cm9rZS13aWR0aD0iOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTE2OSAyMzJMMjI1IDI0NUwyOTYgMjQwLjVMMzQwIDIxMiIgc3Ryb2tlPSIjMzY4NWZmIiBzdHJva2Utd2lkdGg9IjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==" type="image/svg+xml">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="shadcn-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <style>
+        :root {
+            --primary: #8B5CF6;
+            --primary-light: #C4B5FD;
+            --primary-dark: #6D28D9;
+            --secondary: #EC4899;
+            --accent: #F59E0B;
+            --success: #10B981;
+            --error: #EF4444;
+            --bg-gradient-start: #4158D0;
+            --bg-gradient-mid: #C850C0;
+            --bg-gradient-end: #FFCC70;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-mid), var(--bg-gradient-end));
+            background-size: 300% 300%;
+            animation: gradientBG 15s ease infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        .page-container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+            perspective: 1000px;
+        }
+        
+        .login-form {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            transform-style: preserve-3d;
+            transform: translateY(0) rotateX(0);
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-form:hover {
+            transform: translateY(-10px) rotateX(2deg);
+            box-shadow: 
+                0 30px 60px -12px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+        }
+        
+        .login-form::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(to right, var(--primary), var(--secondary), var(--accent));
+            z-index: 1;
+        }
+        
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+        
+        .brand-name {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+        
+        .form-headline {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .form-headline h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+            background-image: linear-gradient(45deg, #6D28D9, #DB2777);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+        
+        .shadcn-input {
+            border-radius: 14px;
+            border: 2px solid #e2e8f0;
+            padding: 0.9rem 1.2rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .shadcn-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+            outline: none;
+            transform: translateY(-2px);
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #4B5563;
+            transition: color 0.3s ease;
+        }
+        
+        .input-group:focus-within label {
+            color: var(--primary);
+        }
+        
+        .emoji-decoration {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+            display: inline-block;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .input-group:focus-within .emoji-decoration {
+            transform: translateY(-3px) scale(1.2);
+        }
+        
+        .shadcn-btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            font-weight: 600;
+            border-radius: 14px;
+            padding: 1rem 1.5rem;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            font-size: 1.1rem;
+        }
+        
+        .shadcn-btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-dark), var(--secondary));
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+        
+        .shadcn-btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.4);
+        }
+        
+        .shadcn-btn-primary:hover::before {
+            opacity: 1;
+        }
+        
+        .shadcn-btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        /* Loading animation styles */
+        .loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            top: 50%;
+            left: 50%;
+            margin: -12px 0 0 -12px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: button-loading-spinner 0.8s ease infinite;
+        }
+
+        @keyframes button-loading-spinner {
+            from {
+                transform: rotate(0turn);
+            }
+            to {
+                transform: rotate(1turn);
+            }
+        }
+        
+        .link-bounce {
+            display: inline-block;
+            transition: all 0.3s ease;
+            transform: translateY(0);
+            position: relative;
+        }
+        
+        .link-bounce:hover {
+            transform: translateY(-4px);
+            text-shadow: 0 4px 8px rgba(109, 40, 217, 0.2);
+        }
+        
+        .link-bounce::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+        }
+        
+        .link-bounce:hover::after {
+            width: 100%;
+        }
+        
+        .footer-text {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .footer-text::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 6px;
+            background-color: var(--primary-light);
+            opacity: 0.5;
+            bottom: 2px;
+            z-index: -1;
+            border-radius: 10px;
+        }
+        
+        /* Error message styles */
+        .error-message {
+            transform: translateY(-10px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .error-message.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        /* Media queries for responsiveness */
+        @media (max-width: 640px) {
+            .login-form {
+                padding: 2rem 1.5rem;
+            }
+            
+            .form-headline h2 {
+                font-size: 1.75rem;
+            }
+        }
+        
+        /* Animated background shapes */
+        .shape {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+            animation: float 10s ease-in-out infinite;
+        }
+        
+        .shape-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -100px;
+            right: -100px;
+            animation: float 12s ease-in-out infinite reverse;
+        }
+        
+        .shape-3 {
+            width: 150px;
+            height: 150px;
+            bottom: 20%;
+            left: 10%;
+            animation: float 8s ease-in-out infinite 1s;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            50% {
+                transform: translate(100px, 50px) rotate(180deg);
+            }
+            100% {
+                transform: translate(0, 0) rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background Shapes -->
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    
+    <!-- Page Container -->
+    <div class="page-container">
+        <!-- Login Container -->
+        <div class="login-container">
+            <div class="login-form">
+                <!-- Brand Logo -->
+                <div class="brand-logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M256 56L56 162.5V184L256 290.5L456 184V162.5L256 56Z" fill="white"/>
+                            <path d="M456 208L413 228V310C390.5 344.5 351 376 256 376C161 376 121.5 344.5 99 310V228L56 208V336C87.5 390.5 158 456 256 456C354 456 424.5 390.5 456 336V208Z" fill="white"/>
+                            <path d="M368 242V306.5L396 282V223L368 242Z" fill="white"/>
+                            <path d="M169 232L151 228.5L143 252L160 250L169 232Z" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M169 232L225 245L296 240.5L340 212" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <span class="brand-name">KelasGuru</span>
+                </div>
+                
+                <div class="form-headline">
+                    <h2>Heyy, Welcome Back!</h2>
+                    <p class="text-gray-600">Login dulu untuk cek nilai & achievements kamu~</p>
+                </div>
+                
+                <div id="login-error" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-5 hidden error-message">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium" id="login-error-message">Data yang dimasukkan tidak valid</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <form id="login-form" class="space-y-5">
+                    <div class="input-group">
+                        <label for="nis">
+                            <span class="emoji-decoration">📝</span> NIS Kamu
+                        </label>
+                        <input id="nis" type="text" class="shadcn-input" placeholder="Ketik NIS kamu di sini~" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="password">
+                            <span class="emoji-decoration">🔑</span> Password
+                        </label>
+                        <input id="password" type="password" class="shadcn-input" placeholder="Password rahasia kamu~" required>
+                    </div>
+                    
+                    <div class="pt-3">
+                        <button type="submit" id="login-btn" class="shadcn-btn-primary w-full py-4 px-4 flex items-center justify-center">
+                            <span class="emoji-decoration">🚀</span> Gas Login!
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-6 text-center">
+                    <a href="login.html" class="text-purple-600 hover:text-purple-800 font-medium link-bounce inline-flex items-center">
+                        <span class="emoji-decoration">👨‍🏫</span> Btw, kamu guru? Login di sini
+                    </a>
+                </div>
+                
+                <div class="mt-8 text-center text-xs text-gray-500">
+                    <span class="footer-text">KelasGuru 2023 - Sistem Super Kece buat Sekolah Hits!</span>
+                </div>
+                
+                <div class="mt-2 text-center">
+                    <button id="test-login-btn" class="text-xs text-gray-400 hover:text-gray-600 transition-all duration-300">Test Koneksi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Integration -->
+    <script src="js/student-api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle login form submission
+            document.getElementById('login-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                hideLoginError();
+                
+                const nis = document.getElementById('nis').value;
+                const password = document.getElementById('password').value;
+                
+                const loginButton = document.getElementById('login-btn');
+                setButtonLoading(loginButton, true);
+                
+                try {
+                    const response = await studentLogin(nis, password);
+                    
+                    if (response.success) {
+                        // Add success animation
+                        loginButton.innerHTML = '<span class="emoji-decoration">✅</span> Sip, berhasil!';
+                        
+                        // Store student data in localStorage
+                        localStorage.setItem('kelasguru_siswa', JSON.stringify(response.siswa));
+                        
+                        // Redirect to student dashboard with a slight delay for animation
+                        setTimeout(() => {
+                            window.location.href = 'siswa-dashboard.html';
+                        }, 800);
+                    } else {
+                        showLoginError(response.error || 'Gagal login, coba lagi ya~');
+                        setButtonLoading(loginButton, false);
+                    }
+                } catch (error) {
+                    showLoginError('Ups! Ada error nih. Coba refresh dulu~');
+                    console.error('Login error:', error);
+                    setButtonLoading(loginButton, false);
+                }
+            });
+            
+            // Add test connection button
+            document.getElementById('test-login-btn').addEventListener('click', async function() {
+                try {
+                    showLoginError('Testing connection to API...');
+                    let formData = new URLSearchParams();
+                    formData.append('action', 'debugSiswaData');
+                    
+                    let response = await fetch(API_URL, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    let data = await response.json();
+                    console.log('API Test Response (debugSiswaData):', data);
+                    
+                    if (data.success) {
+                        showLoginError('Connection successful! Testing student login function...');
+                        
+                        // Now try the testStudentLogin function
+                        formData = new URLSearchParams();
+                        formData.append('action', 'testStudentLogin');
+                        
+                        response = await fetch(API_URL, {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        data = await response.json();
+                        console.log('API Test Response (testStudentLogin):', data);
+                        
+                        if (data.success) {
+                            showLoginError('Test student account created! Use NIS: ' + 
+                                data.testAccount.nis + ' and password: ' + 
+                                data.testAccount.password);
+                                
+                            // Auto-fill form with test credentials
+                            document.getElementById('nis').value = data.testAccount.nis;
+                            document.getElementById('password').value = data.testAccount.password;
+                        } else {
+                            showLoginError('Tes login gagal: ' + (data.error || 'Error gak jelas nih'));
+                        }
+                    } else {
+                        showLoginError('Koneksi berhasil tapi API error: ' + (data.error || 'Unknown error'));
+                    }
+                } catch (error) {
+                    console.error('Test connection error:', error);
+                    showLoginError('Koneksi gagal: ' + error.message);
+                }
+            });
+            
+            // Check if already logged in as student
+            const siswaData = localStorage.getItem('kelasguru_siswa');
+            if (siswaData) {
+                try {
+                    JSON.parse(siswaData); // Validate JSON
+                    window.location.href = 'siswa-dashboard.html';
+                } catch (e) {
+                    localStorage.removeItem('kelasguru_siswa');
+                }
+            }
+            
+            // Add micro-animations for form inputs
+            const inputs = document.querySelectorAll('.shadcn-input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('focused');
+                });
+            });
+        });
+        
+        // Toggle loading state on buttons
+        function setButtonLoading(button, isLoading) {
+            if (isLoading) {
+                button.classList.add('loading');
+                button.disabled = true;
+                button.dataset.originalText = button.textContent;
+                button.textContent = 'Memproses...';
+            } else {
+                button.classList.remove('loading');
+                button.disabled = false;
+                if (button.dataset.originalText) {
+                    button.textContent = button.dataset.originalText;
+                }
+            }
+        }
+        
+        function showLoginError(message) {
+            const errorEl = document.getElementById('login-error');
+            const errorMessageEl = document.getElementById('login-error-message');
+            errorMessageEl.textContent = message;
+            errorEl.classList.remove('hidden');
+            
+            // Add animation class
+            setTimeout(() => {
+                errorEl.classList.add('show');
+            }, 10);
+        }
+        
+        function hideLoginError() {
+            const errorEl = document.getElementById('login-error');
+            errorEl.classList.remove('show');
+            setTimeout(() => {
+                errorEl.classList.add('hidden');
+            }, 300);
+        }
+    </script>
+</body>
+</html> 

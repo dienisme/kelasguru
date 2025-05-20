@@ -1,0 +1,2701 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Siswa - KelasGuru</title>
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjU2IDU2TDU2IDE2Mi41VjE4NEwyNTYgMjkwLjVMNDU2IDE4NFYxNjIuNUwyNTYgNTZaIiBmaWxsPSIjMzY4NWZmIi8+PHBhdGggZD0iTTQ1NiAyMDhMNDEzIDIyOFYzMTBDMzkwLjUgMzQ0LjUgMzUxIDM3NiAyNTYgMzc2QzE2MSAzNzYgMTIxLjUgMzQ0LjUgOTkgMzEwVjIyOEw1NiAyMDhWMzM2Qzg3LjUgMzkwLjUgMTU4IDQ1NiAyNTYgNDU2QzM1NCA0NTYgNDI0LjUgMzkwLjUgNDU2IDMzNlYyMDhaIiBmaWxsPSIjMzY4NWZmIi8+PHBhdGggZD0iTTM2OCAyNDJWMzA2LjVMMzk2IDI4MlYyMjNMMzY4IDI0MloiIGZpbGw9IiMzNjg1ZmYiLz48cGF0aCBkPSJNMTY5IDIzMkwxNTEgMjI4LjVMMTQzIDI1MkwxNjAgMjUwTDE2OSAyMzJaIiBzdHJva2U9IiMzNjg1ZmYiIHN0cm9rZS13aWR0aD0iOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTE2OSAyMzJMMjI1IDI0NUwyOTYgMjQwLjVMMzQwIDIxMiIgc3Ryb2tlPSIjMzY4NWZmIiBzdHJva2Utd2lkdGg9IjgiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==" type="image/svg+xml">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="shadcn-styles.css">
+    <link rel="stylesheet" href="toast.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Load Chart.js from a reliable CDN with a fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script>
+        // Fallback for Chart.js if primary CDN fails
+        if (typeof Chart === 'undefined') {
+            console.log('Primary Chart.js CDN failed, trying alternative...');
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js';
+            script.onload = function() {
+                console.log('Alternative Chart.js loaded successfully');
+            };
+            script.onerror = function() {
+                console.error('Both Chart.js CDNs failed! Charts will not be available.');
+            };
+            document.head.appendChild(script);
+        }
+    </script>
+    
+    <!-- Load required API scripts -->
+    <script src="js/student-api.js"></script>
+    <script src="toast.js"></script>
+    
+    <style>
+        /* Global resets and styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7ff;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: url('https://www.transparenttextures.com/patterns/diamond-upholstery.png');
+        }
+        
+        /* CSS Variables for consistent theming */
+        :root {
+            --primary-color: #8B5CF6;
+            --primary-light: #C4B5FD;
+            --primary-dark: #6D28D9;
+            --secondary-color: #EC4899;
+            --accent-color: #F59E0B;
+            --bg-color: #F5F7FF;
+            --success-color: #10B981;
+            --error-color: #EF4444;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --card-radius: 16px;
+            
+            /* RPG Theme Colors */
+            --rpg-gold: #FFD700;
+            --rpg-silver: #C0C0C0;
+            --rpg-bronze: #CD7F32;
+            --rpg-parchment: #F5F0E1;
+            --rpg-wood: #966F33;
+            --rpg-stone: #7D8491;
+            --rpg-border: #5c3e1b;
+            --rpg-shadow: rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Container and layout styles */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        /* Hide all SVG elements that are not directly styled */
+        svg:not([class]) {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* Improved Header */
+        .header {
+            position: relative;
+            color: white;
+            padding: 1rem 0;
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary-color));
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+        
+        .header-shine {
+            display: none; /* Hide for better performance */
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+        
+        .logo-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        
+        .brand-tagline {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+        
+        .student-profile {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            background-color: white;
+            color: var(--primary-dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .status-indicator {
+            position: absolute;
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+            background-color: var(--success-color);
+            border: 2px solid white;
+            bottom: 0;
+            right: 0;
+        }
+        
+        .logout-button {
+            background-color: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+        
+        .logout-button:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+        
+        .logout-tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            bottom: -30px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s;
+        }
+        
+        .logout-button:hover .logout-tooltip {
+            opacity: 1;
+            bottom: -25px;
+        }
+        
+        /* Dashboard Title Section */
+        .dashboard-title-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .dashboard-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .dashboard-subtitle {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        .actions-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .refresh-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--primary-dark);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+        
+        .refresh-button:hover {
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .last-updated {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        /* Gamification Grid */
+        .gamification-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        /* Card Styles */
+        .gamification-card {
+            background: var(--rpg-parchment);
+            border-radius: var(--card-radius);
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid var(--rpg-border);
+            position: relative;
+        }
+        
+        .gamification-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: calc(var(--card-radius) - 4px);
+            pointer-events: none;
+            margin: 3px;
+        }
+        
+        .gamification-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.15), 0 10px 15px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background: linear-gradient(to right, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--rpg-border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .card-badge {
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 2rem;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-image: url('https://www.transparenttextures.com/patterns/parchment.png');
+            background-color: var(--rpg-parchment);
+        }
+        
+        /* Level Card */
+        .level-card .level-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .level-hero {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .level-badge {
+            width: 5rem;
+            height: 5rem;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            font-weight: 700;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(255, 255, 255, 0.5);
+            border: 3px solid var(--rpg-gold);
+        }
+        
+        .level-badge::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 85%;
+            height: 85%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .level-badge::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        /* Level-specific badge styles */
+        .level-badge.level-1 {
+            background: linear-gradient(135deg, #9CA3AF, #6B7280);
+            border-color: var(--rpg-silver);
+        }
+        
+        .level-badge.level-2 {
+            background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+            border-color: var(--rpg-silver);
+        }
+        
+        .level-badge.level-3 {
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-color: var(--rpg-gold);
+        }
+        
+        .level-badge.level-4 {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            border-color: var(--rpg-gold);
+        }
+        
+        .level-badge.level-5 {
+            background: linear-gradient(135deg, #EF4444, #B91C1C);
+            border-color: var(--rpg-gold);
+            box-shadow: 0 4px 15px rgba(255, 50, 50, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.6);
+        }
+        
+        .level-badge.pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(109, 40, 217, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.5);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(109, 40, 217, 0), inset 0 0 10px rgba(255, 255, 255, 0.5);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(109, 40, 217, 0), inset 0 0 10px rgba(255, 255, 255, 0.5);
+            }
+        }
+        
+        .level-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .level-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #333;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .level-desc {
+            color: #666;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+        
+        .level-progress {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            position: relative;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .xp-progress-container {
+            height: 1rem;
+            background-color: rgba(0,0,0,0.1);
+            border-radius: 1rem;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid var(--rpg-border);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .xp-progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            border-radius: 0.75rem;
+            transition: width 1s ease-in-out;
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+        
+        .progress-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 60px;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.8), transparent);
+            transform: skewX(-20deg);
+            animation: glow 2s infinite;
+        }
+        
+        @keyframes glow {
+            0% {
+                left: -60px;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+        
+        .xp-to-go-container {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+        
+        .motivation-text {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        .level-tips {
+            background-color: #f9f7ff;
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .tips-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #333;
+        }
+        
+        .tips-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            list-style: none;
+        }
+        
+        .tip-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+        
+        .tip-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.5rem;
+        }
+        
+        /* Stats Card */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-item {
+            position: relative;
+            background-color: #f5f7ff;
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stat-icon-bg {
+            position: absolute;
+            right: -15px;
+            bottom: -15px;
+            width: 50px;
+            height: 50px;
+            opacity: 0.1;
+        }
+        
+        .chart-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+            text-align: center;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 180px;
+            width: 100%;
+        }
+        
+        /* Badges Card */
+        .badges-card .card-body {
+            min-height: 200px;
+        }
+        
+        .empty-badges-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            text-align: center;
+            height: 100%;
+        }
+        
+        .badge-animation svg {
+            width: 60px;
+            height: 60px;
+            color: var(--primary-color);
+            opacity: 0.7;
+        }
+        
+        .empty-text {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .action-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: #f5f7ff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: var(--primary-dark);
+            transition: all 0.2s;
+        }
+        
+        .action-button:hover {
+            background-color: #eae5ff;
+        }
+        
+        /* Grades Section */
+        .grades-section {
+            background: white;
+            border-radius: var(--card-radius);
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .section-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box svg {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+        
+        .search-box input {
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border: 1px solid #eee;
+            border-radius: 2rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            width: 200px;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1);
+        }
+        
+        .dropdown-filter select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #eee;
+            border-radius: 2rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            background-color: white;
+            cursor: pointer;
+        }
+        
+        .dropdown-filter select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1);
+        }
+        
+        /* Grades List */
+        .grades-container {
+            position: relative;
+            min-height: 200px;
+        }
+        
+        .grades-empty-state,
+        .grades-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .empty-animation svg,
+        .loading-spinner svg {
+            width: 60px;
+            height: 60px;
+            color: #aaa;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(139, 92, 246, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .empty-state-text,
+        .loading-text {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .grades-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .grade-card {
+            background-color: #f9f9f9;
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+        
+        .grade-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+        
+        .grade-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .assignment-info {
+            flex: 1;
+        }
+        
+        .assignment-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .assignment-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .assignment-category {
+            background-color: #eee;
+            padding: 0.15rem 0.5rem;
+            border-radius: 2rem;
+        }
+        
+        .grade-score {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .score-bubble {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .score-excellent {
+            background-color: var(--success-color);
+        }
+        
+        .score-good {
+            background-color: var(--accent-color);
+        }
+        
+        .score-average {
+            background-color: #6B7280;
+        }
+        
+        .score-poor {
+            background-color: var(--error-color);
+        }
+        
+        .score-label {
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+        }
+        
+        .grade-details {
+            border-top: 1px solid #eee;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .comment-header {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+        
+        .comment-text {
+            font-size: 0.9rem;
+            color: #333;
+            line-height: 1.5;
+        }
+        
+        /* Animation */
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Fix for large SVGs */
+        body > svg {
+            display: none !important;
+        }
+        
+        main ~ svg,
+        main ~ div svg {
+            max-width: 200px !important;
+            max-height: 150px !important;
+            margin: 0 auto;
+        }
+        
+        /* Background patterns styles */
+        .bg-patterns {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .bg-pattern {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.05;
+            background: var(--primary-color);
+        }
+        
+        .pattern-1 {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            right: -100px;
+        }
+        
+        .pattern-2 {
+            width: 300px;
+            height: 300px;
+            bottom: -50px;
+            left: -50px;
+        }
+        
+        /* Force constraint for large SVGs */
+        body svg:not(.constrained) {
+            max-width: 120px !important;
+            max-height: 120px !important;
+        }
+        
+        /* Special controls to hide unwanted chart elements */
+        .stats-chart-container ~ div,
+        .stats-chart-container ~ svg {
+            display: none !important;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .dashboard-title-section,
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .gamification-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-actions {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            
+            .search-box input {
+                width: 100%;
+            }
+            
+            /* Additional mobile adjustments */
+            .header .container {
+                padding: 0.5rem;
+            }
+            
+            .logo-text {
+                font-size: 0.9rem;
+            }
+            
+            .card-header {
+                padding: 0.75rem;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+        }
+        
+        /* Badges Card */
+        .badges-card .card-body {
+            min-height: 200px;
+        }
+        
+        .empty-badges-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            text-align: center;
+            height: 100%;
+        }
+        
+        .badge-animation svg {
+            width: 60px;
+            height: 60px;
+            color: var(--primary-color);
+            opacity: 0.7;
+        }
+
+        .badge-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .badge {
+            background-color: #f9f7ff;
+            border-radius: 1rem;
+            padding: 1rem 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .badge:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .badge-icon {
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-icon img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        
+        
+        /* Leaderboard Card */
+        .leaderboard-card .card-body {
+            padding: 0;
+        }
+        
+        .leaderboard-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .leaderboard-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .leaderboard-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .leaderboard-filter {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.8rem;
+            border: 1px solid #eee;
+            border-radius: 2rem;
+            background-color: white;
+            cursor: pointer;
+        }
+        
+        .leaderboard-table-container {
+            width: 100%;
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+        
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px; /* Ensure minimum width for small screens */
+        }
+        
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+        
+        .leaderboard-table th {
+            background-color: #f5f7ff;
+            font-weight: 600;
+            color: #555;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        
+        .leaderboard-table tr {
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s ease;
+        }
+        
+        .leaderboard-table tr:last-child {
+            border-bottom: none;
+        }
+        
+        .leaderboard-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .rank-cell {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+        
+        .rank-indicator {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #f5f7ff;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        
+        .rank-1 {
+            background-color: gold;
+            color: #333;
+        }
+        
+        .rank-2 {
+            background-color: silver;
+            color: #333;
+        }
+        
+        .rank-3 {
+            background-color: #cd7f32; /* bronze */
+            color: white;
+        }
+        
+        .rank-you {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .student-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .student-avatar {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: #f5f7ff;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        
+        .student-name {
+            font-weight: 500;
+        }
+        
+        .student-class {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        
+        .xp-cell {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        .level-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .level-mini-badge {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        
+        .level-name {
+            font-size: 0.85rem;
+            line-height: 1.2;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Level-specific mini-badge styles */
+        .level-mini-badge-1 {
+            background: linear-gradient(135deg, #9CA3AF, #6B7280);
+        }
+        
+        .level-mini-badge-2 {
+            background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+        }
+        
+        .level-mini-badge-3 {
+            background: linear-gradient(135deg, #10B981, #059669);
+        }
+        
+        .level-mini-badge-4 {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+        }
+        
+        .level-mini-badge-5 {
+            background: linear-gradient(135deg, #EF4444, #B91C1C);
+        }
+        
+        /* Utility classes for responsive display */
+        @media (min-width: 768px) {
+            .md\:inline {
+                display: inline !important;
+            }
+            
+            .md\:hidden {
+                display: none !important;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .hidden {
+                display: none !important;
+            }
+            
+            .inline {
+                display: inline !important;
+            }
+        }
+        
+        .highlight-row {
+            background-color: rgba(139, 92, 246, 0.05) !important;
+            font-weight: 600;
+        }
+        
+        .leaderboard-empty {
+            padding: 2rem;
+            text-align: center;
+            color: #888;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            gap: 1rem;
+        }
+        
+        .leaderboard-loading {
+            padding: 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
+
+        /* Badge Icon Styles */
+        .badge-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 56px;
+            height: 56px;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-icon img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        /* Fallback for when images fail to load */
+        .badge-icon-fallback {
+            font-size: 2rem;
+            color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Badge Loading Indicator */
+        .badge-container.loading {
+            opacity: 0.6;
+            position: relative;
+            min-height: 150px;
+        }
+
+        .badge-container.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            margin: -15px 0 0 -15px;
+            border: 3px solid rgba(139, 92, 246, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+            z-index: 10;
+        }
+
+        
+    </style>
+</head>
+<body>
+    <!-- Background patterns (simplified) -->
+    <div class="bg-patterns">
+        <div class="bg-pattern pattern-1"></div>
+        <div class="bg-pattern pattern-2"></div>
+    </div>
+    
+    <!-- Header with simplified design -->
+    <header class="header">
+        <div class="container mx-auto py-4 px-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <div class="logo-container">
+                        <div class="logo-icon">
+                            <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" width="40" height="40">
+                                <path d="M256 56L56 162.5V184L256 290.5L456 184V162.5L256 56Z" fill="white"/>
+                                <path d="M456 208L413 228V310C390.5 344.5 351 376 256 376C161 376 121.5 344.5 99 310V228L56 208V336C87.5 390.5 158 456 256 456C354 456 424.5 390.5 456 336V208Z" fill="white"/>
+                                <path d="M368 242V306.5L396 282V223L368 242Z" fill="white"/>
+                                <path d="M169 232L151 228.5L143 252L160 250L169 232Z" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M169 232L225 245L296 240.5L340 212" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="logo-text">
+                            <h1 class="brand-name">KelasGuru</h1>
+                            <div class="brand-tagline">Dashboard Siswa</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-5">
+                    <div class="welcome-text hidden lg:block">
+                        <span class="greeting">Halo, </span>
+                        <span id="student-name" class="student-name">Nama Siswa</span>
+                    </div>
+                    
+                    <div class="student-profile">
+                        <div id="student-avatar" class="avatar">S</div>
+                        <div class="status-indicator online"></div>
+                    </div>
+                    
+                    <button id="logout-btn" class="logout-button" aria-label="Logout">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                        <span class="logout-tooltip">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Dashboard Title Section with Modern Visual Treatment -->
+        <div class="dashboard-title-section">
+            <div class="title-container">
+                <h2 class="dashboard-title">
+                    <span class="emoji-icon">🎮</span> Dashboard Kamu
+                </h2>
+                <p class="dashboard-subtitle">Yuhuuu! Ini dia achievements & progress belajar kamu~</p>
+            </div>
+            <div class="actions-container">
+                <button class="refresh-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 2v6h-6"></path>
+                        <path d="M3 12a9 9 0 0 1 15-6.7l3-3"></path>
+                        <path d="M3 22v-6h6"></path>
+                        <path d="M21 12a9 9 0 0 1-15 6.7l-3 3"></path>
+                    </svg>
+                    <span>Refresh</span>
+                </button>
+                
+                <div class="last-updated">
+                    <span class="last-updated-label">Terakhir update:</span>
+                    <span class="last-updated-time" id="last-updated">Hari ini, 12:35</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Gamification Overview with enhanced cards -->
+        <div class="gamification-grid">
+            <!-- Level Info - Enhanced Card -->
+            <div class="gamification-card level-card">
+                <div class="card-header">
+                    <span class="emoji-icon">⭐</span> Level & Progress
+                    <div class="card-badge">Achievement</div>
+                </div>
+                <div class="card-body">
+                    <div class="level-content">
+                        <div class="level-hero">
+                            <div id="level-badge" class="level-badge level-1 pulse">1</div>
+                            <div class="level-info">
+                                <div class="level-title">Level <span id="level-number">1</span></div>
+                                <div id="level-desc" class="level-desc">Pemula Antusias</div>
+                            </div>
+                        </div>
+                        
+                        <div class="level-progress">
+                            <div class="progress-info">
+                                <span class="current-xp"><span id="current-xp">0</span> XP</span>
+                                <span class="next-level-xp"><span id="next-level-xp">1000</span> XP</span>
+                            </div>
+                            <div class="xp-progress-container">
+                                <div id="xp-progress" class="xp-progress-bar" style="width: 0%"></div>
+                                <div class="progress-glow"></div>
+                            </div>
+                            <div class="xp-to-go-container">
+                                <span class="xp-to-go-text">Butuh <span id="xp-to-go">1000</span> XP lagi buat naik level!</span>
+                                <span class="motivation-text">Semangat!</span>
+                            </div>
+                        </div>
+                        
+                        <div class="level-tips">
+                            <h4 class="tips-title">Cara Naikin XP:</h4>
+                            <ul class="tips-list">
+                                <li class="tip-item">
+                                    <span class="tip-icon">✅</span>
+                                    <span class="tip-text">Submit tugas on time dong!</span>
+                                </li>
+                                <li class="tip-item">
+                                    <span class="tip-icon">🎯</span>
+                                    <span class="tip-text">Dapetin nilai 80+, slay!</span>
+                                </li>
+                                <li class="tip-item">
+                                    <span class="tip-icon">🏆</span>
+                                    <span class="tip-text">Aktif participation di kelas</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats - Enhanced Card -->
+            <div class="gamification-card stats-card">
+                <div class="card-header">
+                    <span class="emoji-icon">📊</span> Statistik Kamu
+                    <div class="card-badge">Analytics</div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value" id="completed-assignments">0</div>
+                            <div class="stat-label">Tugas Kelar</div>
+                            <div class="stat-icon-bg">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-item">
+                            <div class="stat-value" id="average-grade">0</div>
+                            <div class="stat-label">Rata² Nilai</div>
+                            <div class="stat-icon-bg">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 20v-6M6 20V10M18 20V4"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-chart-container">
+                        <h4 class="chart-title">Grafik Nilai Kamu</h4>
+                        <div class="chart-wrapper">
+                            <canvas id="gradesChart" height="180"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Badges - Enhanced Card -->
+            <div class="gamification-card badges-card">
+                <div class="card-header">
+                    <span class="emoji-icon">🏅</span> Badge Collection
+                    <div class="card-badge">Rewards</div>
+                </div>
+                <div class="card-body" id="badges-container">
+                    <div class="empty-badges-state">
+                        <div class="fallback-animation badge-animation">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="8" r="7"></circle>
+                                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                            </svg>
+                        </div>
+                        <p class="empty-text">Belum ada badge nih.<br>Grind terus ya, bestie!</p>
+                        <button class="action-button">
+                            <span>How to Get Badges</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14M12 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Add Leaderboard Card -->
+            <div class="gamification-card leaderboard-card">
+                <div class="card-header">
+                    <span class="emoji-icon">🏆</span> Leaderboard Siswa
+                    <div class="card-badge">Peringkat</div>
+                </div>
+                <div class="card-body">
+                    <div class="leaderboard-header">
+                        <div class="leaderboard-title">Top Performers</div>
+                        <div class="leaderboard-actions">
+                            <select id="leaderboard-filter" class="leaderboard-filter">
+                                <option value="all">Semua Kelas</option>
+                                <option value="my-class">Kelas Saya</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="leaderboard-loading" class="leaderboard-loading">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mb-2"></div>
+                        <p class="text-gray-500">Memuat data peringkat...</p>
+                    </div>
+                    
+                    <div id="leaderboard-empty" class="leaderboard-empty hidden">
+                        <div class="fallback-animation">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v3h4"></path>
+                                <path d="M19 17V5a2 2 0 0 0-2-2H4"></path>
+                                <path d="M15 8h.01"></path>
+                                <path d="M15 12h.01"></path>
+                                <path d="M15 16h.01"></path>
+                            </svg>
+                        </div>
+                        <p class="empty-text">Belum ada data peringkat siswa. Cek kembali nanti ya!</p>
+                    </div>
+                    
+                    <div id="leaderboard-container" class="hidden">
+                        <div class="leaderboard-table-container">
+                            <table class="leaderboard-table">
+                                <thead>
+                                    <tr>
+                                        <th width="10%">Rank</th>
+                                        <th width="50%">Siswa</th>
+                                        <th width="20%">XP</th>
+                                        <th width="20%">Level</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leaderboard-rows">
+                                    <!-- Leaderboard data will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Grades Section with Enhanced UI -->
+        <div class="grades-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <span class="emoji-icon">📝</span> Nilai-nilai Kamu
+                </div>
+                <div class="section-actions">
+                    <div class="search-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" placeholder="Cari nilai..." id="grade-search">
+                    </div>
+                    <div class="dropdown-filter">
+                        <select id="grade-filter" class="filter-select">
+                            <option value="all">Semua Kategori</option>
+                            <option value="Tugas">Tugas</option>
+                            <option value="Ujian">Ujian</option>
+                            <option value="Kuis">Kuis</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grades-container">
+                <div id="grades-empty-state" class="grades-empty-state hidden">
+                    <div class="fallback-animation empty-animation">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                            <path d="M8 14h.01"></path>
+                            <path d="M12 14h.01"></path>
+                            <path d="M16 14h.01"></path>
+                            <path d="M8 18h.01"></path>
+                            <path d="M12 18h.01"></path>
+                            <path d="M16 18h.01"></path>
+                        </svg>
+                        <div class="animation-accent"></div>
+                    </div>
+                    <p class="empty-state-text">Belum ada data nilai nih. Semangat buat dapetin nilai kece!</p>
+                    <button class="action-button">
+                        <span>Lihat Tugas Aktif</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div id="grades-loading" class="grades-loading">
+                    <div class="fallback-animation loading-spinner">
+                        <div class="spinner"></div>
+                    </div>
+                    <p class="loading-text">Bentar ya, lagi loading data...</p>
+                </div>
+                
+                <div id="grades-list" class="grades-list hidden">
+                    <!-- Grades will be inserted here by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Grade Card Template that will be cloned by JavaScript -->
+        <template id="grade-card-template">
+            <div class="grade-card">
+                <div class="grade-header">
+                    <div class="assignment-info">
+                        <h3 class="assignment-title"></h3>
+                        <div class="assignment-meta">
+                            <span class="assignment-category"></span>
+                            <span class="assignment-date"></span>
+                        </div>
+                    </div>
+                    <div class="grade-score">
+                        <div class="score-bubble">
+                            <span class="score-value"></span>
+                        </div>
+                        <div class="score-label"></div>
+                    </div>
+                </div>
+                
+                <div class="grade-details">
+                    <div class="comment-container">
+                        <div class="comment-header">Komentar Guru:</div>
+                        <div class="comment-text"></div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </main>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hide oversized SVGs that might be injected after the grades section
+            function hideUnwantedSVGs() {
+                // Find and remove any large SVGs that are direct children of body
+                const directSVGs = document.querySelectorAll('body > svg');
+                directSVGs.forEach(svg => {
+                    svg.style.display = 'none';
+                });
+                
+                // Find SVGs that appear after our main content
+                const mainSection = document.querySelector('main');
+                if (mainSection) {
+                    let currentNode = mainSection.nextElementSibling;
+                    while (currentNode) {
+                        if (currentNode.tagName === 'SVG') {
+                            currentNode.style.display = 'none';
+                        } else if (currentNode.querySelectorAll) {
+                            const nestedSVGs = currentNode.querySelectorAll('svg');
+                            nestedSVGs.forEach(svg => {
+                                svg.setAttribute('width', '120');
+                                svg.setAttribute('height', '120');
+                                svg.style.maxWidth = '120px';
+                                svg.style.maxHeight = '120px';
+                                svg.style.margin = '0 auto';
+                            });
+                        }
+                        currentNode = currentNode.nextElementSibling;
+                    }
+                }
+            }
+            
+            // Set initial last-updated time
+            updateLastUpdated();
+            
+            // Handle SVG size constraints for all fallback animations
+            const fallbackSvgs = document.querySelectorAll('.fallback-animation svg');
+            fallbackSvgs.forEach(svg => {
+                svg.setAttribute('width', '80');
+                svg.setAttribute('height', '80');
+            });
+            
+            // Target and constrain the large visualization SVGs seen in the screenshot
+            function constrainDynamicSVGs() {
+                // Find any large SVGs that might be created dynamically
+                const allSVGs = document.querySelectorAll('svg:not(.constrained)');
+                allSVGs.forEach(svg => {
+                    // Skip SVGs that are already properly sized in our UI components
+                    if (svg.closest('.fallback-animation') || 
+                        svg.closest('.logo-icon') || 
+                        svg.closest('.refresh-button') ||
+                        svg.closest('.search-box')) return;
+                    
+                    // Add constrained class to track processed SVGs
+                    svg.classList.add('constrained');
+                    
+                    // Set strict size limits
+                    svg.setAttribute('width', '120');
+                    svg.setAttribute('height', '120');
+                    svg.style.maxWidth = '120px';
+                    svg.style.maxHeight = '120px';
+                    svg.style.display = 'block';
+                    svg.style.margin = '0 auto';
+                    
+                    // Also check for any parent container that needs constraints
+                    const parent = svg.parentElement;
+                    if (parent && parent.tagName !== 'BODY') {
+                        parent.style.maxWidth = '100%';
+                        parent.style.overflow = 'hidden';
+                        parent.style.display = 'flex';
+                        parent.style.justifyContent = 'center';
+                    }
+                });
+                
+                // Run hideUnwantedSVGs to handle any SVGs outside our main content
+                hideUnwantedSVGs();
+            }
+            
+            // Call initially and set to run periodically to catch dynamically added SVGs
+            constrainDynamicSVGs();
+            setInterval(constrainDynamicSVGs, 500);
+            
+            // Add refresh functionality to refresh both grades and gamification data
+            const refreshButton = document.querySelector('.refresh-button');
+            if (refreshButton) {
+                refreshButton.addEventListener('click', async function() {
+                    // Check if student is logged in
+                    const student = checkStudentLogin();
+                    if (!student) return;
+                    
+                    try {
+                        // Show loading states
+                        document.getElementById('grades-loading').classList.remove('hidden');
+                        document.getElementById('grades-list').classList.add('hidden');
+                        document.getElementById('grades-empty-state').classList.add('hidden');
+                        
+                        // Create toast notification
+                        createToast('Memuat ulang data...', 'loading');
+                        
+                        // Load student grades
+                        const gradesResponse = await getSiswaNilai(student.id);
+                        if (gradesResponse.success) {
+                            displayGrades(gradesResponse.data);
+                            if (gradesResponse.data && gradesResponse.data.length > 0) {
+                                // Reinitialize chart if data exists
+                                if (window.gradesChart) {
+                                    window.gradesChart.destroy();
+                                }
+                                initGradesChart(gradesResponse.data);
+                            }
+                        } else {
+                            console.error('Failed to load grades:', gradesResponse.error);
+                            createToast('Gagal memuat data nilai', 'error');
+                        }
+                        
+                        // Load gamification data
+                        const gamificationResponse = await getSiswaGamification(student.id);
+                        if (gamificationResponse.success) {
+                            displayGamification(gamificationResponse.data);
+                        } else {
+                            console.error('Failed to load gamification:', gamificationResponse.error);
+                            createToast('Gagal memuat data gamifikasi', 'error');
+                        }
+                        
+                        // Load leaderboard data
+                        await loadLeaderboard(student.id, student.kelas_id);
+                        
+                        // Update last updated time
+                        updateLastUpdated();
+                        
+                        // Success notification
+                        dismissToast();
+                        createToast('Data berhasil diperbarui!', 'success');
+                        
+                    } catch (error) {
+                        console.error('Error refreshing data:', error);
+                        createToast('Terjadi kesalahan saat memuat data', 'error');
+                        document.getElementById('grades-loading').classList.add('hidden');
+                    }
+                });
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Check if student is logged in
+                const student = checkStudentLogin();
+                if (!student) {
+                    console.log('No student is logged in, redirecting to login page');
+                    window.location.href = 'siswa-login.html';
+                    return;
+                }
+                
+                console.log('Student logged in:', student);
+                
+                // Set student info
+                const studentNameEl = document.getElementById('student-name');
+                const studentAvatarEl = document.getElementById('student-avatar');
+                
+                if (studentNameEl) studentNameEl.textContent = student.nama || 'Siswa';
+                if (studentAvatarEl) studentAvatarEl.textContent = (student.nama || 'S').charAt(0).toUpperCase();
+                
+                // Handle logout
+                const logoutBtn = document.getElementById('logout-btn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', function() {
+                        logoutStudent();
+                    });
+                }
+                
+                // Initialize chart
+                let gradesChart;
+                
+                try {
+                    // Create toast notification
+                    createToast('Memuat data...', 'loading');
+                    
+                    // Load student grades
+                    const gradesResponse = await getSiswaNilai(student.id);
+                    if (gradesResponse && gradesResponse.success) {
+                        displayGrades(gradesResponse.data);
+                        if (gradesResponse.data && gradesResponse.data.length > 0) {
+                            initGradesChart(gradesResponse.data);
+                        }
+                    } else {
+                        console.error('Failed to load grades:', gradesResponse ? gradesResponse.error : 'No response');
+                        createToast('Gagal load data nilai, sorry!', 'error');
+                    }
+                    
+                    // Load gamification data
+                    const gamificationResponse = await getSiswaGamification(student.id);
+                    if (gamificationResponse && gamificationResponse.success) {
+                        displayGamification(gamificationResponse.data || {});
+                    } else {
+                        console.error('Failed to load gamification:', gamificationResponse ? gamificationResponse.error : 'No response');
+                        createToast('Gagal load data gamifikasi, sorry!', 'error');
+                        // Initialize with empty data to prevent errors
+                        displayGamification({});
+                    }
+                    
+                    // Load leaderboard data
+                    if (student.id) {
+                        await loadLeaderboard(student.id, student.kelas_id);
+                    }
+                    
+                    // Remove loading toast
+                    dismissToast();
+                    createToast('Yuhuu~ Data udah ter-update!', 'success');
+                    
+                } catch (error) {
+                    console.error('Error loading student data:', error);
+                    createToast('Oops! Error nih. Refresh gih~', 'error');
+                    // Initialize with empty data to prevent cascading errors
+                    displayGamification({});
+                }
+            } catch (error) {
+                console.error('Error in DOMContentLoaded event handler:', error);
+                // Redirect to login page if there's a fatal error
+                window.location.href = 'siswa-login.html';
+            }
+        });
+        
+        // Calculate level based on XP - synced with gamification.html
+        function calculateLevel(xp) {
+            const xpNumber = parseInt(xp, 10);
+            if (isNaN(xpNumber)) return 1;
+            
+            if (xpNumber < 100) return 1;
+            if (xpNumber < 300) return 2;
+            if (xpNumber < 700) return 3;
+            if (xpNumber < 1500) return 4;
+            return 5;
+        }
+        
+        // Get level name based on level number
+        function getLevelName(level) {
+            switch(parseInt(level, 10)) {
+                case 1: return "Pemula Antusias";
+                case 2: return "Pelajar Tekun";
+                case 3: return "Juara Berkembang";
+                case 4: return "Ilmuwan Muda";
+                case 5: return "Sang Maestro";
+                default: return "Pemula Antusias";
+            }
+        }
+        
+        // Modified display grades function
+        function displayGrades(grades) {
+            const loadingEl = document.getElementById('grades-loading');
+            const emptyStateEl = document.getElementById('grades-empty-state');
+            const gradesListEl = document.getElementById('grades-list');
+            
+            // Hide all elements initially
+            loadingEl.classList.add('hidden');
+            emptyStateEl.classList.add('hidden');
+            gradesListEl.classList.add('hidden');
+            
+            // Clear existing grades
+            gradesListEl.innerHTML = '';
+            
+            if (!grades || grades.length === 0) {
+                emptyStateEl.classList.remove('hidden');
+                return;
+            }
+            
+            // Sort grades by date (newest first)
+            grades.sort((a, b) => {
+                return new Date(b.tugas.tanggal) - new Date(a.tugas.tanggal);
+            });
+            
+            // Get the template
+            const template = document.getElementById('grade-card-template');
+            
+            // Generate grade cards
+            grades.forEach((grade, index) => {
+                // Create a clone of the template
+                const card = template.content.cloneNode(true);
+                
+                // Populate the card with data
+                card.querySelector('.assignment-title').textContent = grade.tugas.judul;
+                card.querySelector('.assignment-category').textContent = grade.tugas.kategori || 'Umum';
+                card.querySelector('.assignment-date').textContent = formatDate(grade.tugas.tanggal);
+                
+                // Set the score and style
+                const scoreValue = grade.nilai || '-';
+                const scoreElement = card.querySelector('.score-value');
+                scoreElement.textContent = scoreValue;
+                
+                // Add score bubble class based on grade
+                const scoreBubble = card.querySelector('.score-bubble');
+                const scoreClass = getScoreClass(grade.nilai);
+                scoreBubble.classList.add(scoreClass);
+                
+                // Set score label
+                card.querySelector('.score-label').textContent = getGradeLabel(grade.nilai);
+                
+                // Set comment or hide comment section if none
+                const commentContainer = card.querySelector('.comment-container');
+                const commentText = card.querySelector('.comment-text');
+                
+                if (grade.komentar) {
+                    commentText.textContent = grade.komentar;
+                } else {
+                    commentText.textContent = 'Tidak ada komentar dari guru.';
+                    commentText.style.fontStyle = 'italic';
+                    commentText.style.opacity = '0.7';
+                }
+                
+                // Add animation delay based on index
+                const gradeCard = card.querySelector('.grade-card');
+                gradeCard.style.animationDelay = `${index * 0.1}s`;
+                gradeCard.classList.add('fade-in');
+                
+                // Append the card to the grades list
+                gradesListEl.appendChild(card);
+            });
+            
+            // Show the grades list
+            gradesListEl.classList.remove('hidden');
+            
+            // Setup search and filter functionality
+            setupGradesSearch(grades);
+        }
+        
+        // Helper function to get score class
+        function getScoreClass(nilai) {
+            const grade = parseInt(nilai);
+            if (isNaN(grade)) return 'score-average';
+            
+            if (grade >= 90) return 'score-excellent';
+            if (grade >= 80) return 'score-good';
+            if (grade >= 70) return 'score-average';
+            return 'score-poor';
+        }
+        
+        // Setup search and filter functionality
+        function setupGradesSearch(originalGrades) {
+            const searchInput = document.getElementById('grade-search');
+            const filterSelect = document.getElementById('grade-filter');
+            
+            function filterGrades() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filterValue = filterSelect.value;
+                
+                // Filter grades based on search term and category
+                const filteredGrades = originalGrades.filter(grade => {
+                    const matchesSearch = grade.tugas.judul.toLowerCase().includes(searchTerm) || 
+                                         (grade.komentar && grade.komentar.toLowerCase().includes(searchTerm));
+                                         
+                    const matchesCategory = filterValue === 'all' || 
+                                           (grade.tugas.kategori && grade.tugas.kategori === filterValue);
+                                           
+                    return matchesSearch && matchesCategory;
+                });
+                
+                // Update the UI with filtered grades
+                updateGradesUI(filteredGrades);
+            }
+            
+            // Update the UI based on filtered grades
+            function updateGradesUI(filteredGrades) {
+                const gradesListEl = document.getElementById('grades-list');
+                const emptyStateEl = document.getElementById('grades-empty-state');
+                
+                // Clear existing grades
+                gradesListEl.innerHTML = '';
+                
+                if (filteredGrades.length === 0) {
+                    gradesListEl.classList.add('hidden');
+                    emptyStateEl.classList.remove('hidden');
+                    return;
+                }
+                
+                emptyStateEl.classList.add('hidden');
+                gradesListEl.classList.remove('hidden');
+                
+                // Get the template
+                const template = document.getElementById('grade-card-template');
+                
+                // Generate grade cards for filtered grades
+                filteredGrades.forEach((grade, index) => {
+                    // Create a clone of the template
+                    const card = template.content.cloneNode(true);
+                    
+                    // Populate the card with data (same as in displayGrades)
+                    card.querySelector('.assignment-title').textContent = grade.tugas.judul;
+                    card.querySelector('.assignment-category').textContent = grade.tugas.kategori || 'Umum';
+                    card.querySelector('.assignment-date').textContent = formatDate(grade.tugas.tanggal);
+                    
+                    const scoreValue = grade.nilai || '-';
+                    const scoreElement = card.querySelector('.score-value');
+                    scoreElement.textContent = scoreValue;
+                    
+                    const scoreBubble = card.querySelector('.score-bubble');
+                    const scoreClass = getScoreClass(grade.nilai);
+                    scoreBubble.classList.add(scoreClass);
+                    
+                    card.querySelector('.score-label').textContent = getGradeLabel(grade.nilai);
+                    
+                    const commentContainer = card.querySelector('.comment-container');
+                    const commentText = card.querySelector('.comment-text');
+                    
+                    if (grade.komentar) {
+                        commentText.textContent = grade.komentar;
+                    } else {
+                        commentText.textContent = 'Tidak ada komentar dari guru.';
+                        commentText.style.fontStyle = 'italic';
+                        commentText.style.opacity = '0.7';
+                    }
+                    
+                    const gradeCard = card.querySelector('.grade-card');
+                    gradeCard.style.animationDelay = `${index * 0.1}s`;
+                    gradeCard.classList.add('fade-in');
+                    
+                    gradesListEl.appendChild(card);
+                });
+            }
+            
+            // Set up event listeners
+            searchInput.addEventListener('input', filterGrades);
+            filterSelect.addEventListener('change', filterGrades);
+            
+            // Initial population of category filter
+            populateCategoryFilter(originalGrades);
+        }
+        
+        // Populate category filter with unique categories from grades
+        function populateCategoryFilter(grades) {
+            const filterSelect = document.getElementById('grade-filter');
+            const categories = new Set();
+            
+            // Collect unique categories
+            grades.forEach(grade => {
+                if (grade.tugas.kategori) {
+                    categories.add(grade.tugas.kategori);
+                }
+            });
+            
+            // Clear existing options except the "All" option
+            while (filterSelect.options.length > 1) {
+                filterSelect.remove(1);
+            }
+            
+            // Add category options
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                filterSelect.appendChild(option);
+            });
+        }
+        
+        // Helper function to format date
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return dateString;
+            
+            return date.toLocaleDateString('id-ID', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            });
+        }
+        
+        // Helper function to get grade label
+        function getGradeLabel(nilai) {
+            const grade = parseInt(nilai);
+            if (isNaN(grade)) return '';
+            
+            if (grade >= 90) return 'Slay banget!';
+            if (grade >= 80) return 'Mantap jiwa!';
+            if (grade >= 70) return 'Lumayan~';
+            if (grade >= 60) return 'Masih kurang';
+            return 'Butuh glow up!';
+        }
+        
+        // Create toast notification
+        function createToast(message, type = 'info') {
+            if (typeof toast !== 'undefined') {
+                toast({
+                    title: message,
+                    variant: type
+                });
+            }
+        }
+        
+        // Dismiss all toasts
+        function dismissToast() {
+            if (typeof dismissToasts !== 'undefined') {
+                dismissToasts();
+            }
+        }
+
+        // Update displayGamification function to use the level calculation and names
+        function displayGamification(data) {
+            // Debug logging for user "Dave" to check XP and level
+            if (data && data.siswa_id) {
+                const studentNameEl = document.getElementById('student-name');
+                const studentName = studentNameEl ? studentNameEl.textContent : '';
+                
+                if (studentName && studentName.toLowerCase().includes('dave')) {
+                    console.log('[DEBUG] Dave\'s gamification data:', JSON.stringify(data));
+                    console.log('[DEBUG] Dave\'s XP:', data.xp, 'Original level:', data.level);
+                    console.log('[DEBUG] Calculated level for Dave:', calculateLevel(data.xp));
+                }
+            }
+
+            // Calculate level properly based on XP
+            const currentXp = data.xp || 0;
+            const level = calculateLevel(currentXp); // Always use calculateLevel for consistency
+            const levelName = getLevelName(level);
+            
+            // Set level info in UI - with null checks
+            const levelNumberEl = document.getElementById('level-number');
+            const levelBadgeEl = document.getElementById('level-badge');
+            const levelDescEl = document.getElementById('level-desc');
+            
+            if (levelNumberEl) levelNumberEl.textContent = level;
+            if (levelBadgeEl) {
+                levelBadgeEl.textContent = level;
+                levelBadgeEl.className = `level-badge level-${level}`;
+            }
+            if (levelDescEl) levelDescEl.textContent = levelName;
+            
+            // Calculate next level XP thresholds
+            let nextLevelXp;
+            if (level === 1) nextLevelXp = 100;
+            else if (level === 2) nextLevelXp = 300;
+            else if (level === 3) nextLevelXp = 700;
+            else if (level === 4) nextLevelXp = 1500;
+            else nextLevelXp = data.next_level_xp || currentXp + 500;
+            
+            // Calculate XP to next level
+            const xpToGo = nextLevelXp - currentXp;
+            const progressPercent = Math.min(100, (currentXp / nextLevelXp) * 100);
+            
+            // Update UI with null checks
+            const currentXpEl = document.getElementById('current-xp');
+            const nextLevelXpEl = document.getElementById('next-level-xp');
+            const xpToGoEl = document.getElementById('xp-to-go');
+            const xpProgressEl = document.getElementById('xp-progress');
+            
+            if (currentXpEl) currentXpEl.textContent = currentXp;
+            if (nextLevelXpEl) nextLevelXpEl.textContent = nextLevelXp;
+            if (xpToGoEl) xpToGoEl.textContent = xpToGo;
+            
+            // Animate the progress bar
+            if (xpProgressEl) {
+                setTimeout(() => {
+                    xpProgressEl.style.width = `${progressPercent}%`;
+                }, 300);
+            }
+            
+            // Set statistics with null checks
+            const completedAssignmentsEl = document.getElementById('completed-assignments');
+            const averageGradeEl = document.getElementById('average-grade');
+            
+            if (completedAssignmentsEl) completedAssignmentsEl.textContent = data.completed_assignments || 0;
+            if (averageGradeEl) averageGradeEl.textContent = data.average_grade || 0;
+            
+            // Handle badges display with loading state
+            displayBadges(data);
+        }
+
+        // Separate function for badge display to allow progressive loading
+        function displayBadges(data) {
+            const badgesContainer = document.getElementById('badges-container');
+            if (!badgesContainer) return;
+            
+            if (!data.badges) {
+                // Show loading state while waiting for badges
+                const emptyState = badgesContainer.querySelector('.empty-badges-state');
+                if (emptyState) {
+                    // Show loading in empty state
+                    const loadingHtml = `
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mb-2"></div>
+                        <p class="empty-text">Memuat badge...</p>
+                    `;
+                    emptyState.innerHTML = loadingHtml;
+                }
+                return;
+            }
+            
+            // Now we have badge data
+            if (data.badges.length === 0) {
+                // If no badges, show empty state
+                badgesContainer.innerHTML = `
+                    <div class="empty-badges-state">
+                        <div class="fallback-animation badge-animation">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="8" r="7"></circle>
+                                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                            </svg>
+                        </div>
+                        <p class="empty-text">Belum ada badge nih.<br>Grind terus ya, bestie!</p>
+                        <button class="action-button">
+                            <span>How to Get Badges</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14M12 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Clear the empty state
+            badgesContainer.innerHTML = '';
+            
+            // Create badge container
+            const badgeGridDiv = document.createElement('div');
+            badgeGridDiv.className = 'badge-container';
+            
+            // Generate badges - ensure each badge has all required properties
+            data.badges.forEach((badge, index) => {
+                // Create badge element with standard properties
+                const badgeDiv = document.createElement('div');
+                badgeDiv.className = 'badge fade-in';
+                badgeDiv.style.animationDelay = `${index * 0.1}s`;
+                
+                // Get badge data based on field names from gamification.html
+                const iconUrl = badge.icon_url || badge.icon || 'https://via.placeholder.com/64?text=Badge';
+                const name = badge.nama_badge || badge.name || 'Badge';
+                const description = badge.deskripsi || badge.description || '';
+                
+                badgeDiv.innerHTML = `
+                    <div class="badge-icon">
+                        <img src="${iconUrl}" alt="${name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/64?text=Badge';">
+                    </div>
+                    <div class="text-sm font-medium">${name}</div>
+                    <div class="text-xs text-gray-500">${description}</div>
+                `;
+                
+                badgeGridDiv.appendChild(badgeDiv);
+            });
+            
+            // Add badges to container
+            badgesContainer.appendChild(badgeGridDiv);
+        }
+
+        // Load and display leaderboard data
+        async function loadLeaderboard(studentId, classId) {
+            const leaderboardContainer = document.getElementById('leaderboard-container');
+            const leaderboardLoading = document.getElementById('leaderboard-loading');
+            const leaderboardEmpty = document.getElementById('leaderboard-empty');
+            const leaderboardRows = document.getElementById('leaderboard-rows');
+            
+            // Check if elements exist
+            if (!leaderboardContainer || !leaderboardLoading || !leaderboardEmpty) {
+                console.error('Leaderboard elements not found in DOM');
+                return;
+            }
+            
+            // Hide results and show loading
+            leaderboardContainer.classList.add('hidden');
+            leaderboardEmpty.classList.add('hidden');
+            leaderboardLoading.classList.remove('hidden');
+            
+            try {
+                // Fetch leaderboard data
+                const response = await getSiswaLeaderboard();
+                
+                if (!response.success || !response.data || response.data.length === 0) {
+                    console.error('Failed to load leaderboard data:', response.error);
+                    // Show empty state with error message if there's an error
+                    leaderboardLoading.classList.add('hidden');
+                    leaderboardEmpty.classList.remove('hidden');
+                    leaderboardEmpty.innerHTML = '<p>Gagal memuat data peringkat. Silakan refresh halaman atau coba lagi nanti.</p>';
+                    return;
+                }
+                
+                // Process and sort leaderboard data by XP (descending)
+                let leaderboardData = response.data.sort((a, b) => (b.xp || 0) - (a.xp || 0));
+                
+                // Store the full leaderboard
+                const fullLeaderboard = [...leaderboardData];
+                
+                // Initial render of all students
+                renderLeaderboard(leaderboardData, studentId);
+                
+                // Set up filter change handler if filter element exists
+                const leaderboardFilter = document.getElementById('leaderboard-filter');
+                if (leaderboardFilter) {
+                    leaderboardFilter.addEventListener('change', function() {
+                        const filterValue = this.value;
+                        if (filterValue === 'all') {
+                            renderLeaderboard(fullLeaderboard, studentId);
+                        } else if (filterValue === 'my-class') {
+                            // Filter to show only students in the same class
+                            const filteredData = fullLeaderboard.filter(student => student.kelas_id === classId);
+                            renderLeaderboard(filteredData, studentId);
+                        }
+                    });
+                }
+                
+                // Hide loading and show data
+                leaderboardLoading.classList.add('hidden');
+                leaderboardContainer.classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('Error loading leaderboard:', error);
+                leaderboardLoading.classList.add('hidden');
+                leaderboardEmpty.classList.remove('hidden');
+                leaderboardEmpty.innerHTML = '<p>Gagal memuat data peringkat. Silakan refresh halaman atau coba lagi nanti.</p>';
+            }
+        }
+        
+        // Render the leaderboard with given data
+        function renderLeaderboard(data, currentStudentId) {
+            const leaderboardRows = document.getElementById('leaderboard-rows');
+            leaderboardRows.innerHTML = '';
+            
+            if (!data || data.length === 0) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = `
+                    <td colspan="4" class="text-center py-4 text-gray-500">
+                        Tidak ada data leaderboard yang tersedia
+                    </td>
+                `;
+                leaderboardRows.appendChild(emptyRow);
+                return;
+            }
+            
+            // Debug: Log Dave's data from leaderboard
+            const daveData = data.find(student => student.nama && student.nama.toLowerCase().includes('dave'));
+            if (daveData) {
+                console.log('[DEBUG] Dave in leaderboard:', JSON.stringify(daveData));
+                console.log('[DEBUG] Dave\'s XP in leaderboard:', daveData.xp, 'Original level:', daveData.level);
+                console.log('[DEBUG] Calculated level for Dave in leaderboard:', calculateLevel(daveData.xp));
+            }
+            
+            // Generate rows for each student in the leaderboard
+            data.forEach((student, index) => {
+                const rank = index + 1;
+                const isCurrentStudent = student.id === currentStudentId;
+                
+                // Create the row element
+                const row = document.createElement('tr');
+                if (isCurrentStudent) {
+                    row.classList.add('highlight-row');
+                }
+                
+                // Determine rank class for styling
+                let rankClass = '';
+                if (rank === 1) rankClass = 'rank-1';
+                else if (rank === 2) rankClass = 'rank-2';
+                else if (rank === 3) rankClass = 'rank-3';
+                else if (isCurrentStudent) rankClass = 'rank-you';
+                
+                // Get first character of name for avatar
+                const nameInitial = (student.nama || 'S').charAt(0).toUpperCase();
+                
+                // Calculate level and get level name if missing
+                const studentXp = student.xp || 0;
+                const level = calculateLevel(studentXp); // Always use calculateLevel
+                const levelName = getLevelName(level);
+                
+                // Display shorter level name on mobile
+                const shortLevelName = levelName.split(' ')[0]; // Just take the first word for mobile
+                
+                // Create cell contents
+                row.innerHTML = `
+                    <td>
+                        <div class="rank-cell">
+                            <div class="rank-indicator ${rankClass}">${rank}</div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="student-cell">
+                            <div class="student-avatar">${nameInitial}</div>
+                            <div>
+                                <div class="student-name">${student.nama || 'Student'}</div>
+                                <div class="student-class">${student.kelas_nama || 'Class'}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="xp-cell">${studentXp} XP</td>
+                    <td>
+                        <div class="level-cell">
+                            <div class="level-mini-badge level-mini-badge-${level}">${level}</div>
+                            <span class="level-name">
+                                <span class="hidden md:inline">Level ${level} - ${levelName}</span>
+                                <span class="inline md:hidden">L${level} - ${shortLevelName}</span>
+                            </span>
+                        </div>
+                    </td>
+                `;
+                
+                // Add the row to the table
+                leaderboardRows.appendChild(row);
+            });
+            
+            // Ensure we show at most 10 rows for clean UI
+            if (data.length > 10) {
+                const rows = leaderboardRows.querySelectorAll('tr');
+                for (let i = 10; i < rows.length; i++) {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+
+        // Update the last-updated timestamp
+        function updateLastUpdated() {
+            const now = new Date();
+            const options = { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false
+            };
+            const timeString = now.toLocaleTimeString([], options);
+            
+            document.getElementById('last-updated').textContent = `Hari ini, ${timeString}`;
+        }
+
+        // Initialize chart for showing grade trends
+        function initGradesChart(grades) {
+            // Check if Chart is available
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js not loaded. Cannot initialize chart.');
+                return;
+            }
+
+            if (!grades || grades.length === 0) return;
+            
+            // Sort grades by date (oldest first for the chart)
+            grades.sort((a, b) => {
+                return new Date(a.tugas.tanggal) - new Date(b.tugas.tanggal);
+            });
+            
+            // Extract last 5 grades for the chart
+            const recentGrades = grades.slice(-5);
+            
+            const labels = recentGrades.map(grade => {
+                const title = grade.tugas.judul;
+                return title.length > 15 ? title.substring(0, 15) + '...' : title;
+            });
+            
+            const values = recentGrades.map(grade => Number(grade.nilai) || 0);
+            
+            // Make sure the canvas exists
+            const chartCanvas = document.getElementById('gradesChart');
+            if (!chartCanvas) {
+                console.error('Chart canvas element not found!');
+                return;
+            }
+            
+            const ctx = chartCanvas.getContext('2d');
+            
+            // Safer way to destroy existing chart if it exists
+            try {
+                if (window.gradesChart instanceof Chart) {
+                    window.gradesChart.destroy();
+                }
+            } catch (e) {
+                console.log('No previous chart to destroy, creating new one');
+            }
+            
+            // Create new chart and store it globally
+            window.gradesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Nilai Tugas',
+                        data: values,
+                        backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                        borderColor: 'rgba(139, 92, 246, 1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: 'white',
+                        pointBorderColor: 'rgba(139, 92, 246, 1)',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                font: {
+                                    family: "'Poppins', sans-serif",
+                                    size: 10
+                                }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: {
+                                    family: "'Poppins', sans-serif",
+                                    size: 10
+                                }
+                            }
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Debug function to fix Dave's level
+        window.fixDaveLevel = async function() {
+            try {
+                // Get all students
+                const studentsResponse = await callApi('getSiswa');
+                if (!studentsResponse.success) {
+                    console.error('[DEBUG] Failed to get students');
+                    return;
+                }
+                
+                // Find Dave
+                const dave = studentsResponse.data.find(s => s.nama && s.nama.toLowerCase().includes('dave'));
+                if (!dave) {
+                    console.error('[DEBUG] Dave not found in students list');
+                    return;
+                }
+                
+                console.log('[DEBUG] Found Dave:', dave);
+                
+                // Get Dave's XP data
+                const xpResponse = await callApi('getGamifikasiXP');
+                if (!xpResponse.success) {
+                    console.error('[DEBUG] Failed to get XP data');
+                    return;
+                }
+                
+                // Filter XP for Dave
+                const davesXp = xpResponse.data.filter(x => x.siswa_id === dave.id);
+                const totalXp = davesXp.reduce((sum, x) => sum + parseInt(x.jumlah_xp || 0, 10), 0);
+                
+                console.log('[DEBUG] Dave\'s total XP:', totalXp);
+                console.log('[DEBUG] Dave\'s calculated level should be:', calculateLevel(totalXp));
+                
+                // Now we need to update the UI
+                if (document.getElementById('student-name').textContent.toLowerCase().includes('dave')) {
+                    // If the current user is Dave, refresh gamification data
+                    console.log('[DEBUG] Current user is Dave, refreshing data...');
+                    const gamificationResponse = await getSiswaGamification(dave.id);
+                    if (gamificationResponse && gamificationResponse.success) {
+                        displayGamification({...gamificationResponse.data, xp: totalXp});
+                        console.log('[DEBUG] Dave\'s gamification data refreshed');
+                    }
+                }
+                
+                // Also refresh leaderboard if visible
+                const leaderboardContainer = document.getElementById('leaderboard-container');
+                if (leaderboardContainer && !leaderboardContainer.classList.contains('hidden')) {
+                    console.log('[DEBUG] Refreshing leaderboard data...');
+                    await loadLeaderboard(dave.id, dave.kelas_id);
+                }
+                
+                return {
+                    daveId: dave.id,
+                    totalXp,
+                    calculatedLevel: calculateLevel(totalXp)
+                };
+            } catch (error) {
+                console.error('[DEBUG] Error fixing Dave\'s level:', error);
+            }
+        };
+    </script>
+</body>
+</html> 
